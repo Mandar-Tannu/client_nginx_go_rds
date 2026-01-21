@@ -14,6 +14,7 @@ import (
 ========================= */
 
 var rdsDB *sql.DB
+var instanceID string
 
 func getEnv(key string) string {
 	val := os.Getenv(key)
@@ -103,7 +104,7 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Stored user data in RDS successfully:", name, email, phone)
-	w.Write([]byte("User data stored in RDS successfully"))
+	w.Write([]byte("User data stored by instance: " + instanceID))
 }
 
 /* =========================
@@ -111,7 +112,12 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 ========================= */
 
 func main() {
-	initDatabases()
+	instanceID = os.Getenv("HOSTNAME")
+if instanceID == "" {
+	instanceID = "unknown-instance"
+}
+	
+initDatabases()
 
 	http.HandleFunc("/", formHandler)
 	http.HandleFunc("/submit", submitHandler)
