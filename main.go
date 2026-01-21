@@ -112,12 +112,14 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 ========================= */
 
 func main() {
-	instanceID = os.Getenv("HOSTNAME")
-if instanceID == "" {
-	instanceID = "unknown-instance"
-}
+	host, err := os.Hostname()
+	if err != nil {
+		instanceID = "unknown-instance"
+	} else {
+		instanceID = host
+	}
 	
-initDatabases()
+	initDatabases()
 
 	http.HandleFunc("/", formHandler)
 	http.HandleFunc("/submit", submitHandler)
